@@ -1,0 +1,60 @@
+<template>
+    <lightning-card>
+        <!-- Displaying Datatable with Contacts -->
+        <template if:true={contacts}>
+            <lightning-datatable 
+                key-field="Id" 
+                columns={columns}  
+                data={contacts} 
+                onrowaction={handleRowAction}>
+            </lightning-datatable>
+        </template>
+      
+        <!-- Modal for Editing Contact -->
+        <template if:true={isModalOpen}>
+            <section role="dialog"
+            aria-modal="true"
+            class={modalClass}>
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <h2 class="slds-modal__title">Contact</h2>
+                    </header>
+                    <div class="slds-modal_content slds-p-medium">
+                        <lightning-record-edit-form 
+                            record-id={recordId} 
+                            object-api-name="Contact" 
+                            onsuccess={handleSuccess}>
+                        
+                            <lightning-input-field field-name="FirstName"> </lightning-input-field>
+                            <lightning-input-field field-name="LastName"> </lightning-input-field>
+                            <lightning-input-field field-name="Title"> </lightning-input-field>
+                            <lightning-input-field field-name="AccountId"> </lightning-input-field>
+                        
+                            <div class="slds-m-top_medium">
+                                <lightning-button 
+                                    class="slds-m-top_small" 
+                                    variant="brand" 
+                                    type="submit" 
+                                    label="Update">
+                                </lightning-button>
+                                <lightning-button 
+                                    class="slds-m-top_small" 
+                                    variant="neutral" 
+                                    label="Cancel" 
+                                    onclick={closeModal}>
+                                </lightning-button>
+                            </div>
+                        </lightning-record-edit-form>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+
+        </template>
+
+        <!-- Error Handling -->
+        <template if:true={error}>
+            <div class="slds-text-color_error">{error}</div>
+        </template>
+    </lightning-card>
+</template>
