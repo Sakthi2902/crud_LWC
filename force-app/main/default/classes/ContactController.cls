@@ -4,10 +4,24 @@ public with sharing class ContactController {
     
     // Method to get Contact records with @AuraEnabled annotation for Lightning components
     @AuraEnabled(cacheable=true)
-    public static List<Contact> getContacts() {
-        // Fetch a list of contacts from the database with a limit of 10
-        return [SELECT Id, FirstName, LastName, Title ,AccountId, Account.Name,Email FROM Contact LIMIT 20];
+    public static List<Contact> getContacts(String searchKeyword) {
+        if (String.isNotBlank(searchKeyword)) {
+            String searchword = '%' + searchKeyword + '%';  // Added missing semicolon
+            return [SELECT Id, FirstName, LastName, Title, AccountId, Account.Name, Email 
+                    FROM Contact 
+                    WHERE AccountId != null 
+                    AND FirstName LIKE :searchword 
+                    LIMIT 50];
+        } else {
+            // Fetch a list of contacts from the database with a limit of 50 if searchKeyword is blank or null
+            return [SELECT Id, FirstName, LastName, Title, AccountId, Account.Name, Email 
+                    FROM Contact 
+                    WHERE AccountId != null 
+                    LIMIT 50];
+        }
     }
+    
+    
     @AuraEnabled(cacheable=true)
     public static void deleteRecord(String contactId) {
         
@@ -17,6 +31,7 @@ public with sharing class ContactController {
             delete contactToDelete;
         }
     }
+
     
     
 }

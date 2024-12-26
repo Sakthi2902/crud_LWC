@@ -1,4 +1,4 @@
-import { LightningElement, wire ,track} from 'lwc';
+import { LightningElement, wire } from 'lwc';
 import getContacts from '@salesforce/apex/ContactController.getContacts';
 import deleteRecord from '@salesforce/apex/ContactController.deleteRecord';
 import {ShowToastEvent} from 'lightning/platformShowToastEvent';
@@ -6,13 +6,14 @@ import {refreshApex} from '@salesforce/apex'
 export default class ContactManagementDemo extends LightningElement {
     // Variables
     //@7
+    searchKey='';
     wiredContactResult;
     recordId;
     contacts;
     errors;
     //@5 
     isModalOpen=false;
-    @track recordId;
+    recordId;
 
     // Column definitions
     columns = [
@@ -36,7 +37,7 @@ export default class ContactManagementDemo extends LightningElement {
     ];
 
     // Fetch data using wire
-    @wire(getContacts)
+    @wire(getContacts, { searchKeyword:'$searchKey'})
     getwiredcontacts(result) {
         this.wiredContactResult=result;
         const { data, error } = result;
@@ -133,5 +134,15 @@ export default class ContactManagementDemo extends LightningElement {
     }
     refreshData(){
         return  this.wiredContactResult? refreshApex(this.wiredContactResult):undefined;
+    }
+    handleSearch(event){
+        this.searchKey=event.target.value
+
+    }
+
+    handleContactCreate(){
+        this.isModalOpen=true;
+        this.recordId=null;
+      
     }
 }
