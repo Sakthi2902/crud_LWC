@@ -1,6 +1,7 @@
 import { LightningElement, wire } from 'lwc';
 import getContacts from '@salesforce/apex/ContactController.getContacts';
-import deleteRecord from '@salesforce/apex/ContactController.deleteRecord';
+import deleteRecord from '@salesforce/apex/ContactController.deleteRecord'
+import deleteBulk from '@salesforce/apex/ContactController.deleteBulk';
 import {ShowToastEvent} from 'lightning/platformShowToastEvent';
 import {refreshApex} from '@salesforce/apex'
 export default class ContactManagementDemo extends LightningElement {
@@ -14,6 +15,7 @@ export default class ContactManagementDemo extends LightningElement {
     //@5 
     isModalOpen=false;
     recordId;
+    selectedRows=[];
 
     // Column definitions
     columns = [
@@ -145,4 +147,38 @@ export default class ContactManagementDemo extends LightningElement {
         this.recordId=null;
       
     }
+    handleBulkDeletion(event) {
+        const allSelectedRows = event.detail.selectedRows;
+        this.selectedRows = allSelectedRows;
+    }
+    
+    handleBulkDelete() {
+        if (this.selectedRows.length === 0) {
+            alert('Please select at least one row');
+            return;
+        }
+    
+        // Get contact Ids from the selected rows
+        const contactIds = this.selectedRows.map(contact => contact.Id);
+    
+        // Call Apex method to delete the selected contacts
+        deleteBulk({ lstContactIds: contactIds })
+            .then(result => {
+                // Show success message using ShowToastEvent
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Success',
+                        message: 'Contacts Deleted Successfully',
+                        variant: 'success'
+                    })
+                );
+            })
+            .catch(error => {
+                // Show error message
+                console.error(error);
+                alert('Error deleting bulk records');
+            });
+    }
+    
+   
 }

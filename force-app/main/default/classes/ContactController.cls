@@ -19,6 +19,7 @@ public with sharing class ContactController {
                     WHERE AccountId != null 
                     LIMIT 50];
         }
+
     }
     
     
@@ -31,7 +32,15 @@ public with sharing class ContactController {
             delete contactToDelete;
         }
     }
-
+    @AuraEnabled
+    public static void deleteBulk(List<Id> lstContactIds) {
+        // Ensure that the contact list is not empty before performing the delete
+        if(lstContactIds != null && !lstContactIds.isEmpty()) {
+            List<Contact> lstToDelete = [SELECT Id FROM Contact WHERE Id IN :lstContactIds];
+            delete lstToDelete;
+        }
+    }
+    
     
     
 }

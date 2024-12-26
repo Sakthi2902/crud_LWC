@@ -14,7 +14,7 @@
 
         <!-- Displaying Datatable with Contacts -->
         <template if:true={contacts}>
-            <lightning-datatable key-field="Id" columns={columns} data={contacts} onrowaction={handleRowAction}></lightning-datatable>
+            <lightning-datatable key-field="Id" columns={columns} data={contacts} onrowaction={handleRowAction} onrowselection={handleBulkDeletion}></lightning-datatable>
         </template>
 
         <!-- Modal for Editing Contact -->
